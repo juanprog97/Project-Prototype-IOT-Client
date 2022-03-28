@@ -19,16 +19,16 @@
       </tr>
 
       <tr id="addElement">
-        <td><button @click="openModal" id="addButtonDevice">+</button></td>
+        <td><button @click="changeModal" id="addButtonDevice">+</button></td>
         <td><p for="addButtonDevice">Add a new appliances</p></td>
       </tr>
     </table>
 
     <div class="modal-select" v-if="modalIsOpen">
       <div id="containt-data">
-        <button>EV registration</button>
-        <button>Comfort Parameter</button>
-        <button>Cancel</button>
+        <button @click="registerData('ev')">EV registration</button>
+        <button @click="registerData('comfort')">Comfort Parameter</button>
+        <button @click="changeModal">Cancel</button>
       </div>
     </div>
   </div>
@@ -48,8 +48,21 @@ export default {
     // this.listDevices = this.$route.params.data;
   },
   methods: {
-    openModal() {
+    changeModal() {
       this.modalIsOpen = !this.modalIsOpen;
+    },
+
+    registerData(type) {
+      switch (type) {
+        case "ev":
+          this.$router.push({ name: "evregistration" });
+          return;
+        case "comfort":
+          this.$router.push({ name: "confortParameters" });
+          return;
+        default:
+          return;
+      }
     },
   },
   components: {

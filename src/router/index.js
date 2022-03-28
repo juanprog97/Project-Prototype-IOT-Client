@@ -15,7 +15,7 @@ Vue.use(VueRouter);
 const routes = [
   {
     path: "/",
-    name: "",
+    name: "Login",
     component: Login,
     meta: { requireAuth: false },
   },
@@ -36,20 +36,18 @@ const routes = [
         component: ListDevices,
         name: "listDevices",
         meta: { requireAuth: true },
-        children: [
-          {
-            path: "confort-parameters",
-            name: "confortParameters",
-            component: ConfortParameter,
-            meta: { requireAuth: true },
-          },
-          {
-            path: "ev-registration",
-            name: "evregistration",
-            component: EVRegister,
-            meta: { requireAuth: true },
-          },
-        ],
+      },
+      {
+        path: "confort-parameters",
+        name: "confortParameters",
+        component: ConfortParameter,
+        meta: { requireAuth: true },
+      },
+      {
+        path: "ev-registration",
+        name: "evregistration",
+        component: EVRegister,
+        meta: { requireAuth: true },
       },
 
       {
@@ -81,14 +79,22 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  if (to.meta.requireAuth) {
-    if (localStorage.getItem("auth") == "false") {
-      next({ path: "/" });
+  if (to.name == "Login" || to.name == "Register") {
+    if (localStorage.getItem("auth") == "true") {
+      next({ name: "home" });
     } else {
       next();
     }
   } else {
-    next();
+    if (to.meta.requireAuth) {
+      if (localStorage.getItem("auth") == "false") {
+        next({ path: "/" });
+      } else {
+        next();
+      }
+    } else {
+      next();
+    }
   }
 });
 

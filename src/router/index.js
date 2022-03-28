@@ -1,23 +1,76 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Home from "../views/Home.vue";
+import Login from "../views/Login.vue";
+import Register from "../views/Register.vue";
+import ListDevices from "../views/ListDevices.vue";
+import EVRegister from "../views/EvalRegister.vue";
+import ConfortParameter from "../views/ConfortParameter.vue";
+import ActivityToday from "../views/ActivityToday.vue";
+import Summary from "../views/Summary.vue";
+import Dashboard from "../views/UserApp.vue";
+import Home from "../views/HomePage.vue";
 
 Vue.use(VueRouter);
 
 const routes = [
   {
     path: "/",
-    name: "Home",
-    component: Home,
+    name: "",
+    component: Login,
+    meta: { requireAuth: false },
   },
   {
-    path: "/about",
-    name: "About",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/About.vue"),
+    path: "/register",
+    name: "Register",
+    component: Register,
+    meta: { requireAuth: false },
+  },
+  {
+    path: "/dashboard",
+    nmae: "Dashboard",
+    component: Dashboard,
+    meta: { requireAuth: true },
+    children: [
+      {
+        path: "list-devices",
+        component: ListDevices,
+        name: "listDevices",
+        meta: { requireAuth: true },
+        children: [
+          {
+            path: "confort-parameters",
+            name: "confortParameters",
+            component: ConfortParameter,
+            meta: { requireAuth: true },
+          },
+          {
+            path: "ev-registration",
+            name: "evregistration",
+            component: EVRegister,
+            meta: { requireAuth: true },
+          },
+        ],
+      },
+
+      {
+        path: "activity-today",
+        name: "activityToday",
+        component: ActivityToday,
+        meta: { requireAuth: true },
+      },
+      {
+        path: "summary",
+        name: "summary",
+        component: Summary,
+        meta: { requireAuth: true },
+      },
+      {
+        path: "home-resume",
+        name: "home",
+        component: Home,
+        meta: { requireAuth: true },
+      },
+    ],
   },
 ];
 
@@ -25,6 +78,18 @@ const router = new VueRouter({
   mode: "history",
   base: process.env.BASE_URL,
   routes,
+});
+
+router.beforeEach((to, from, next) => {
+  if (to.meta.requireAuth) {
+    if (localStorage.getItem("auth") == "false") {
+      next({ path: "/" });
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
 });
 
 export default router;

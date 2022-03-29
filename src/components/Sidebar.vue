@@ -28,13 +28,16 @@ export default {
     RouterLink(page) {
       switch (page) {
         case "Home":
-          this.$router.push({ name: "home" });
+          if (this.$router.currentRoute.name != "home")
+            this.$router.push({ name: "home" });
           break;
         case "LiveNow":
-          this.$router.push({ name: "activityToday" });
+          if (this.$router.currentRoute.name != "activityToday")
+            this.$router.push({ name: "activityToday" });
           break;
         case "Summary":
-          this.$router.push({ name: "summary" });
+          if (this.$router.currentRoute.name != "summary")
+            this.$router.push({ name: "summary" });
           break;
         case "Settings":
           this.$router.push({ name: "/" });

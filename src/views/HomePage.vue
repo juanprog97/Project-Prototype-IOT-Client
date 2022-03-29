@@ -1,21 +1,15 @@
 <template>
   <div id="container-home">
-    <label id="welcome-message">Hi {{ this.dataInfoDevices.nameUser }}!</label>
+    <label id="welcome-message">Hi {{ this.nameUser.name }}!</label>
     <div id="resume-devices">
-      <button v-if="this.dataInfoDevices.allDevices.length > 0">
-        <FileImage
-          :nameImage="this.dataInfoDevices.allDevices[0].imgSrc"
-          width="60vw"
-        />
-        <p>{{ this.dataInfoDevices.allDevices[0].name }}</p>
+      <button v-if="this.allDevices.length > 0">
+        <FileImage :nameImage="this.allDevices[0].imgSrc" width="60vw" />
+        <p>{{ this.allDevices[0].name }}</p>
       </button>
       <div id="other-sect">
         <button>
-          <FileImage
-            :nameImage="this.dataInfoDevices.allDevices[1].imgSrc"
-            width="40vw"
-          />
-          <p>{{ this.dataInfoDevices.allDevices[1].name }}</p>
+          <FileImage :nameImage="this.allDevices[1].imgSrc" width="40vw" />
+          <p>{{ this.allDevices[1].name }}</p>
         </button>
         <button @click="seeAllDevices">
           ---
@@ -46,7 +40,7 @@
     <div id="advice">
       <div id="advice-text">
         <p id="head-text">
-          Switch off #38 save {{ this.devicesRecommend.porcentageSave }}
+          Switch off and save {{ this.devicesRecommend.porcentageSave }}
         </p>
         <p id="descrip-text">
           It seems your {{ this.devicesRecommend.nameDevice }} is on once since
@@ -60,47 +54,92 @@
 
 <script>
 import FileImage from "../components/FileSvg.vue";
+import axios from "axios";
 export default {
+  async mounted() {
+    //Name
+    let url = process.env.VUE_APP_API_URL + "user";
+    await axios
+      .get(url)
+      .then((response) => {
+        this.nameUser = response.data;
+      })
+      .catch((err) => {
+        switch (err.response.status) {
+          case 401:
+            console.log("error");
+            break;
+        }
+      });
+    //Devices
+    let url2 = process.env.VUE_APP_API_URL + "listDevices";
+    await axios
+      .get(url2)
+      .then((response) => {
+        this.allDevices = response.data;
+      })
+      .catch((err) => {
+        switch (err.response.status) {
+          case 401:
+            console.log("error");
+            break;
+        }
+      });
+
+    //Ahorro
+    let url3 = process.env.VUE_APP_API_URL + "resumeGeneral";
+    await axios
+      .get(url3)
+      .then((response) => {
+        this.infoResume = response.data;
+      })
+      .catch((err) => {
+        switch (err.response.status) {
+          case 401:
+            console.log("error");
+            break;
+        }
+      });
+    //resume
+    let url4 = process.env.VUE_APP_API_URL + "recommended";
+    await axios
+      .get(url4)
+      .then((response) => {
+        this.devicesRecommend = response.data;
+      })
+      .catch((err) => {
+        switch (err.response.status) {
+          case 401:
+            console.log("error");
+            break;
+        }
+      });
+  },
   data() {
     return {
-      dataInfoDevices: {
-        nameUser: "Kevin", //Nombre del usuario, recomiendo guardar la info en local storage o en la cache cuando se haga el login
-        allDevices: [
-          //Se ingresa toda la info de los devices
-          {
-            name: "Electric vehicle",
-            imgSrc: "vehiculoElectrico",
-            details: "TESLA MODEL X",
-            state: "Recharge",
-            time: "from 2 am to 5am",
-          },
-          {
-            name: "Washing machine",
-            imgSrc: "lavadora",
-            details: "LG F4WV310S6E",
-            state: "Turn off",
-            time: "at 8pm",
-          },
-          {
-            name: "Air Coinditionator",
-            imgSrc: "aireAcondicionado",
-            details: "SAMSUNG ART12TXH",
-            state: "Turn on",
-            time: "at 11pm",
-          },
-        ],
-      },
+      nameUser: "",
+      allDevices: [
+        {
+          name: "",
+          imgSrc: "welcome-home",
+          details: "",
+          state: "",
+          time: "",
+        },
+        {
+          name: "",
+          imgSrc: "welcome-home",
+          details: "",
+          state: "",
+          time: "",
+        },
+      ],
       infoResume: {
         consumptionToday: "45",
         activeDevices: 4,
         totalDevices: 40,
       },
-      devicesRecommend: {
-        porcentageSave: "10%",
-
-        nameDevice: "Washing machine",
-        time: "4:35hrs",
-      },
+      devicesRecommend: { porcentageSave: "", nameDevice: "", time: "" },
     };
   },
   components: {
@@ -108,16 +147,8 @@ export default {
   },
   methods: {
     seeAllDevices() {
-      //let data = this.dataInfoDevices.allDevices;
-      this.$store.dispatch("saveDevicesAction", {
-        listDevices: this.dataInfoDevices.allDevices,
-      });
-
       this.$router.push({
         name: "listDevices",
-        /*params: {
-          data,
-        },*/
       });
     },
   },

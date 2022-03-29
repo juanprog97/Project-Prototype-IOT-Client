@@ -36,16 +36,28 @@
 
 <script>
 import FileImage from "../components/FileSvg.vue";
+import axios from "axios";
 export default {
   data() {
     return {
       listDevices: [],
-      modalIsOpen: true,
+      modalIsOpen: false,
     };
   },
-  mounted() {
-    this.listDevices = this.$store.state.listDevices;
-    // this.listDevices = this.$route.params.data;
+  async mounted() {
+    let url = process.env.VUE_APP_API_URL + "listDevices";
+    await axios
+      .get(url)
+      .then((response) => {
+        this.listDevices = response.data;
+      })
+      .catch((err) => {
+        switch (err.response.status) {
+          case 401:
+            console.log("error");
+            break;
+        }
+      });
   },
   methods: {
     changeModal() {

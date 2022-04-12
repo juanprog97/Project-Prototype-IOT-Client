@@ -37,6 +37,9 @@ npm run lint
 
 ### Credits:
 
+Author and Designer: Luis Alejandro Acosta - https://www.linkedin.com/in/luis-alejandro-acosta-yela-9901071b3/
+Developer: Juan Cardona - https://www.linkedin.com/in/juan-miguel-cardona-arroyo-b33825176/
+
 ### Customize configuration
 
 See [Configuration Reference](https://cli.vuejs.org/config/).
